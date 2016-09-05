@@ -28,6 +28,7 @@ namespace WebServer
         public Server()
         {}
 
+        // Receiving the verb
         public void sendVerb(string verb)
         {
             Console.WriteLine(verb);
@@ -37,10 +38,15 @@ namespace WebServer
         {
             TcpListener server = new TcpListener(3000); // Port number in localhost
             server.Start();
+            
+            // Loop for listening clients
+
             while (true)
             {
+                // Accepting connection with new client
                 TcpClient client = server.AcceptTcpClient();
                 ClientServerManager manager = new ClientServerManager(this, client);
+                // Handling request from client in a separate thread
                 Thread thread = new Thread(new ThreadStart(manager.getRequest));
                 thread.Start();
                 Thread.Sleep(1);
@@ -50,10 +56,9 @@ namespace WebServer
 
     public class ClientServerManager
     {
+        // Client and Server instances from Server class
         TcpClient client;
         Server server;
-        String verb;
-        Stream stream;
 
         public ClientServerManager(Server server, TcpClient client)
         {
@@ -63,8 +68,10 @@ namespace WebServer
         
         public void getRequest()
         {
-            stream = new BufferedStream(client.GetStream());
+            // Gets the request input stream from client
+            Stream stream = new BufferedStream(client.GetStream());
             String request = "";
+            // Parses the request
             int next;
             while (true)
             {
@@ -80,9 +87,11 @@ namespace WebServer
                 request += Convert.ToChar(next);
             }
             string[] tokens = request.Split(' ');
-            verb = tokens[0].ToUpper();
-            server.sendVerb(verb);
+            // Sends the http verb to server
+            server.sendVerb(tokens[0].ToUpper(););
+            //clears request input stream
             stream = null;
+            // Closes client connection
             client.Close();
         }
     }
