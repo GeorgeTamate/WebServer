@@ -31,7 +31,14 @@ namespace WebServer
         // Receiving the verb
         public void sendVerb(string verb)
         {
-            Console.WriteLine(verb);
+            Console.WriteLine("HttpVerb: " + verb);
+        }
+
+        public void sendAuth(string username, string password)
+        {
+            Console.WriteLine("Username: " + username);
+            Console.WriteLine("Password: " + password);
+            Console.WriteLine();
         }
 
         public void listen()
@@ -65,31 +72,66 @@ namespace WebServer
             this.client = client;
             this.server = server;
         }
+
+        public String getStringFromStream(Stream s)
+        {
+            String str = "";
+            int nextpos;
+            // Parsing http request stream into a string
+            while (true)
+            {
+                nextpos = s.ReadByte();
+                if (nextpos == '\n')
+                    break;
+                if (nextpos == '\r')
+                    continue;
+                if (nextpos == -1) 
+                { 
+                    Thread.Sleep(1); 
+                    continue; 
+                };
+                str += Convert.ToChar(nextpos);
+            }
+            return str;
+        }
         
         public void getRequest()
         {
-            // Gets the request input stream from client
+            // Gets the http request stream from client
             Stream stream = new BufferedStream(client.GetStream());
-            String request = "";
-            // Parses the request
-            int next;
-            while (true)
+            // Parses http request stream to a string
+            String request = getStringFromStream(stream);            
+            String verb = request.Split(' ')[0];
+
+            //// Header into Hashtable
+            Hashtable headerHash = new Hashtable();
+            String key, entry;
+            int index;
+            // Assigning keys and entries to the header hashtable
+            while ((request = getStringFromStream(stream)) != null)
             {
-                next = stream.ReadByte();
-                if (next == '\n') 
-                { 
+                if (request == "")
                     break;
-                }
-                if (next == '\r') 
-                { 
-                    continue; 
-                }
-                request += Convert.ToChar(next);
+                index = request.IndexOf(':');
+                key = request.Substring(0, index++);
+                // Getting position where hash entry starts
+                while ((index < request.Length) && (request[index] == ' '))
+                    index++;
+                entry = request.Substring(index, request.Length - index);
+                headerHash[key] = entry;
             }
-            string[] tokens = request.Split(' ');
-            // Sends the http verb to server
-            server.sendVerb(tokens[0].ToUpper(););
-            //clears request input stream
+            //// Header Hashtable completed
+
+            // Decoding Base 64 Username and Password header hashtable
+            byte[] convertedAuth = Convert.FromBase64String(headerHash["Authorization"].ToString().Split(' ')[1]);
+            String username = Encoding.UTF8.GetString(convertedAuth).Split(':')[0];
+            String password = Encoding.UTF8.GetString(convertedAuth).Split(':')[1];
+
+            //// Sends the http verb to server
+            server.sendVerb(verb);
+            //// Sends the Basic Authentication username and password
+            server.sendAuth(username, password);
+            // Clears request input stream
             stream = null;
             // Closes client connection
             client.Close();
