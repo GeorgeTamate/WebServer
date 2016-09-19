@@ -4,3 +4,5 @@ C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\bin\Debug\WebServer.pdb
 C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\obj\Debug\WebServer.exe
 C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\obj\Debug\WebServer.pdb
 C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\obj\Debug\WebServer.csprojResolveAssemblyReference.cache
+C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\bin\Debug\ServerController.dll
+C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\bin\Debug\ServerController.pdb

@@ -6,28 +6,29 @@ using System.Threading.Tasks;
 
 namespace ServerController
 {
+    
     public class TestController : IController
     {
         public TestController()
         {
         }
 
-        [AttrGET]
+        //[AttrGET]
         public void peopleGet()
         {
         }
 
-        [AttrPOST]
+        //[AttrPOST]
         public void peoplePost()
         {
         }
 
-        [AttrPUT]
+        //[AttrPUT]
         public void peoplePut()
         {
         }
 
-        [AttrDELETE]
+        //[AttrDELETE]
         public void peopleDelete()
         {
         }

@@ -1,1 +1,5 @@
 C:\Users\GeorgeTamate\Desktop\WebServer\ServerController\obj\Debug\ServerController.csprojResolveAssemblyReference.cache
+C:\Users\GeorgeTamate\Desktop\WebServer\ServerController\bin\Debug\ServerController.dll
+C:\Users\GeorgeTamate\Desktop\WebServer\ServerController\bin\Debug\ServerController.pdb
+C:\Users\GeorgeTamate\Desktop\WebServer\ServerController\obj\Debug\ServerController.dll
+C:\Users\GeorgeTamate\Desktop\WebServer\ServerController\obj\Debug\ServerController.pdb
