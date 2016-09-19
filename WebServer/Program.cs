@@ -11,6 +11,8 @@ using System.Collections;
 
 namespace WebServer
 {
+    
+    // MAIN CLASS
     public class Program
     {
         // Port 3000
@@ -23,27 +25,22 @@ namespace WebServer
         }
     }
 
+    
+    
+    
+    
+    
+    
+    
+    // SERVER CLASS
     public class Server
     { 
         public Server()
         {}
 
-        // Receiving the verb
-        public void sendVerb(string verb)
-        {
-            Console.WriteLine("HttpVerb: " + verb);
-        }
-
-        public void sendAuth(string username, string password)
-        {
-            Console.WriteLine("Username: " + username);
-            Console.WriteLine("Password: " + password);
-            Console.WriteLine();
-        }
-
         public void listen()
         {
-            TcpListener server = new TcpListener(3000); // Port number in localhost
+            TcpListener server = new TcpListener(IPAddress.Loopback, 3000); // Port number in localhost
             server.Start();
             
             // Loop for listening clients
@@ -56,11 +53,104 @@ namespace WebServer
                 // Handling request from client in a separate thread
                 Thread thread = new Thread(new ThreadStart(manager.getRequest));
                 thread.Start();
-                Thread.Sleep(1);
+                Thread.Sleep(100);
             }
+        }
+        
+        // Receiving the verb to print on console
+        public void sendVerb(string verb, string url)
+        {
+            Console.WriteLine("HttpVerb: " + verb);
+            Console.WriteLine("URL: http://localhost:3000" + url);
+        }
+
+        // Receiving the username and password to print on console
+        public void sendAuth(string username, string password)
+        {
+            if(username != null && password != null)
+            {
+                Console.WriteLine("Username: " + username);
+                Console.WriteLine("Password: " + password);
+            }
+        }
+
+        public bool isProtected(string filename)
+        {
+            if (filename.Equals("/secret.txt"))
+                return true;
+            return false;
+        }
+
+        public void outputFileToClient(StreamWriter ostream, string filename, string username, string password)
+        {
+            string path = @"c:\Users\GeorgeTamate\Desktop\WebServer\content\";
+            bool fileProtected = isProtected(filename);
+            filename.TrimStart('/');
+
+            if (File.Exists(path + filename))
+            {
+                if (fileProtected)
+                {
+                    if (username == null || password == null)
+                    {
+                        ostream.Write("HTTP/1.0 401 Unauthorized");
+                        ostream.Write(Environment.NewLine);
+                        ostream.Write(Environment.NewLine);
+
+                        ostream.Write("ERROR 401: El archivo esta protegido. Debe proveer nombre de usuario y clave.");
+                        Console.WriteLine();
+                        return;
+                    }
+                    if (!username.Equals("agente") || !password.Equals("secreto"))
+                    {
+                        ostream.Write("HTTP/1.0 401 Unauthorized");
+                        ostream.Write(Environment.NewLine);
+                        ostream.Write(Environment.NewLine);
+
+                        ostream.Write("ERROR 401: Nombre de usuario incorrecto o clave incorrecta.");
+                        Console.WriteLine();
+                        return;
+                    }
+                }
+                
+                using (Stream filestream = File.Open(path + filename, FileMode.Open))
+                    filestream.CopyTo(ostream.BaseStream);
+            }
+            else
+            {
+                ostream.Write("HTTP/1.0 404 Not Found");
+                ostream.Write(Environment.NewLine);
+                ostream.Write(Environment.NewLine);
+
+                ostream.Write("ERROR 404: El archivo solicitado NO existe.");
+            }
+            Console.WriteLine();
+
+            //image/jpeg
+            //text/plain; charset=UTF-8
+            //text/html
+
+            /*
+            ostream.Write("HTTP/1.0 200 OK");
+            ostream.Write(Environment.NewLine);
+            ostream.Write("Content-Type: text/plain; charset=UTF-8");
+            ostream.Write(Environment.NewLine);
+            ostream.Write("Content-Length: " + filestream.Length);
+            ostream.Write(Environment.NewLine);
+            */
         }
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // SERVER MANAGER CLASS
     public class ClientServerManager
     {
         // Client and Server instances from Server class
@@ -99,9 +189,19 @@ namespace WebServer
         {
             // Gets the http request stream from client
             Stream stream = new BufferedStream(client.GetStream());
+            StreamWriter oStream = new StreamWriter(client.GetStream());
+
             // Parses http request stream to a string
             String request = getStringFromStream(stream);            
             String verb = request.Split(' ')[0];
+            String url = request.Split(' ')[1];
+
+            if (url.Equals("/favicon.ico"))
+            {
+                stream.Flush();
+                oStream.Flush();
+                return;
+            }
 
             //// Header into Hashtable
             Hashtable headerHash = new Hashtable();
@@ -123,17 +223,29 @@ namespace WebServer
             //// Header Hashtable completed
 
             // Decoding Base 64 Username and Password header hashtable
-            byte[] convertedAuth = Convert.FromBase64String(headerHash["Authorization"].ToString().Split(' ')[1]);
-            String username = Encoding.UTF8.GetString(convertedAuth).Split(':')[0];
-            String password = Encoding.UTF8.GetString(convertedAuth).Split(':')[1];
 
+            String username = null;
+            String password = null;
+
+            if(headerHash.ContainsKey("Authorization"))
+            {
+                byte[] convertedAuth = Convert.FromBase64String(headerHash["Authorization"].ToString().Split(' ')[1]);
+                username = Encoding.UTF8.GetString(convertedAuth).Split(':')[0];
+                password = Encoding.UTF8.GetString(convertedAuth).Split(':')[1];
+            }
+
+            
             //// Sends the http verb to server
-            server.sendVerb(verb);
+            server.sendVerb(verb, url);
             //// Sends the Basic Authentication username and password
             server.sendAuth(username, password);
+            //// Return a file to the client based on the URL
+            server.outputFileToClient(oStream, url, username, password);
+
             // Clears request input stream
             stream = null;
-            // Closes client connection
+            oStream.Flush();
+
             client.Close();
         }
     }
