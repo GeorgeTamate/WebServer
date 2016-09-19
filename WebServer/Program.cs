@@ -9,6 +9,8 @@ using System.Threading;
 using System.IO;
 using System.Collections;
 
+using ServerController;
+
 namespace WebServer
 {
     
@@ -139,6 +141,27 @@ namespace WebServer
             ostream.Write(Environment.NewLine);
             */
         }
+
+        public void peopleReflection(StreamWriter ostream, string verb)
+        {
+            TestController tc = new TestController();
+
+            /*
+            System.Type testType = typeof(TestController.people());
+
+            // Using reflection.
+            System.Attribute[] attrs = System.Attribute.GetCustomAttributes(tc);  // Reflection.
+
+            foreach (System.Attribute attr in attrs)
+            {
+                
+            }
+             */
+            
+
+
+
+        }
     }
 
     
@@ -234,13 +257,20 @@ namespace WebServer
                 password = Encoding.UTF8.GetString(convertedAuth).Split(':')[1];
             }
 
+            if (url.Equals("people"))
+            {
+
+            }
+            else 
+            {
+                //// Sends the http verb to server
+                server.sendVerb(verb, url);
+                //// Sends the Basic Authentication username and password
+                server.sendAuth(username, password);
+                //// Return a file to the client based on the URL
+                server.outputFileToClient(oStream, url, username, password);
+            }
             
-            //// Sends the http verb to server
-            server.sendVerb(verb, url);
-            //// Sends the Basic Authentication username and password
-            server.sendAuth(username, password);
-            //// Return a file to the client based on the URL
-            server.outputFileToClient(oStream, url, username, password);
 
             // Clears request input stream
             stream = null;
