@@ -8,6 +8,8 @@ using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 using System.Collections;
+using System.Reflection;
+using System.Globalization;
 
 using ServerController;
 
@@ -85,7 +87,7 @@ namespace WebServer
 
         public void outputFileToClient(StreamWriter ostream, string filename, string username, string password)
         {
-            string path = @"c:\Users\GeorgeTamate\Desktop\WebServer\content\";
+            string path = Directory.GetCurrentDirectory() + @"\";
             bool fileProtected = isProtected(filename);
             filename.TrimStart('/');
 
@@ -142,24 +144,44 @@ namespace WebServer
             */
         }
 
-        public void peopleReflection(StreamWriter ostream, string verb)
+        public void peopleReflection(StreamWriter ostream, string verb, string url)
         {
-            TestController tc = new TestController();
+            string path = Directory.GetCurrentDirectory() + @"\";
 
-            /*
-            System.Type testType = typeof(TestController.people());
+            // Loading .dll file
+            var assembly = Assembly.LoadFile(path + @"ServerController.dll");
+            if (assembly == null) throw new Exception("No se pudo encontrar la ServerController.dll en el directorio.");
 
-            // Using reflection.
-            System.Attribute[] attrs = System.Attribute.GetCustomAttributes(tc);  // Reflection.
-
-            foreach (System.Attribute attr in attrs)
-            {
-                
-            }
-             */
+            // Getting Type of Controller Interface
+            var controllerType = assembly.GetType("ServerController.IController");
+            if (controllerType == null) throw new Exception("No se pudo encontrar una interface.");
             
+            // Name of controller implemantation
+            string controllerNameType = "TestController";
 
+            // Getting Verb Type
+            Type attrType = assembly.GetType("ServerController.Attr" + verb);
 
+            // Getting Controller Type by Verifying if compatible with Interface
+            var controller = assembly.GetTypes().FirstOrDefault(
+                t => controllerType.IsAssignableFrom(t) &&
+                t.Name == controllerNameType);
+            if (controller == null) throw new Exception("No se pudo encontrar el Controller.");
+
+            // Getting Method by Custom Attribute Type
+            var method = controller.GetMethods().FirstOrDefault(
+                m => m.GetCustomAttributes(attrType, false).Length > 0);
+            if (method == null) throw new Exception("No se pudo encontrar el metodo.");
+
+            Console.WriteLine("HttpVerb: " + verb);
+            Console.WriteLine("URL: http://localhost:3000" + url);
+            Console.WriteLine("Metodo invocado: {0}.{1}", controller.FullName, method.Name);
+            Console.WriteLine();
+
+            // Invoking Controller Method
+            object classInstance = Activator.CreateInstance(controller, null);
+            object[] parametersArray = {ostream, path};
+            method.Invoke(classInstance, parametersArray);
 
         }
     }
@@ -245,21 +267,21 @@ namespace WebServer
             }
             //// Header Hashtable completed
 
-            // Decoding Base 64 Username and Password header hashtable
-
+            
             String username = null;
             String password = null;
 
             if(headerHash.ContainsKey("Authorization"))
             {
+                // Decoding Base 64 Username and Password header hashtable
                 byte[] convertedAuth = Convert.FromBase64String(headerHash["Authorization"].ToString().Split(' ')[1]);
                 username = Encoding.UTF8.GetString(convertedAuth).Split(':')[0];
                 password = Encoding.UTF8.GetString(convertedAuth).Split(':')[1];
             }
 
-            if (url.Equals("people"))
+            if (url.Equals("/people"))
             {
-
+                server.peopleReflection(oStream, verb, url);
             }
             else 
             {

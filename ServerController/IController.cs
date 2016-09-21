@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerController
 {
-    interface IController
+    public interface IController
     {
     }
 }

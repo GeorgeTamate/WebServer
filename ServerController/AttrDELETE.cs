@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerController
 {
-    [System.AttributeUsage(System.AttributeTargets.Class |
-                       System.AttributeTargets.Struct)
-    ]
+    [System.AttributeUsage(System.AttributeTargets.Method)]
     class AttrDELETE : System.Attribute
     {
         private string verb;

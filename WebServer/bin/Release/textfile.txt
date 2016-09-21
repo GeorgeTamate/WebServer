@@ -1,0 +1,6 @@
+WOOHOO!!!
+
+Este es el contenido del archivo de texto textfile.txt
+
+by George Garcia Tamate
+

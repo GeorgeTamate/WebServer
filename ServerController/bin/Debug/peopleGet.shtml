@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+
+<HTML>
+	<HEAD>
+		<TITLE>Hello World in HTML</TITLE>
+	</HEAD>
+	<BODY>
+		<CENTER><H1>You Used httpVerb:</H1></CENTER>
+		<CENTER><H1>GET</H1></CENTER>
+		<CENTER><H3>by George Garcia Tamate</H3></CENTER>
+	</BODY>
+</HTML>
