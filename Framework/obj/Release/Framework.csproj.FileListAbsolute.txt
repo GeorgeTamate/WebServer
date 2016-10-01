@@ -1,0 +1,5 @@
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\Framework\bin\Release\Framework.dll
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\Framework\bin\Release\Framework.pdb
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\Framework\obj\Release\Framework.csprojResolveAssemblyReference.cache
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\Framework\obj\Release\Framework.dll
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\Framework\obj\Release\Framework.pdb

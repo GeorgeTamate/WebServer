@@ -1,6 +1,8 @@
-C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\bin\Debug\WebServer.exe.config
-C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\bin\Debug\WebServer.exe
-C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\bin\Debug\WebServer.pdb
-C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\obj\Debug\WebServer.exe
-C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\obj\Debug\WebServer.pdb
-C:\Users\GeorgeTamate\Desktop\WebServer\WebServer\obj\Debug\WebServer.csprojResolveAssemblyReference.cache
+c:\users\carme\documents\visual studio 2015\Projects\WebServer\WebServer\bin\Debug\WebServer.exe.config
+c:\users\carme\documents\visual studio 2015\Projects\WebServer\WebServer\bin\Debug\WebServer.exe
+c:\users\carme\documents\visual studio 2015\Projects\WebServer\WebServer\bin\Debug\WebServer.pdb
+c:\users\carme\documents\visual studio 2015\Projects\WebServer\WebServer\obj\Debug\WebServer.csprojResolveAssemblyReference.cache
+c:\users\carme\documents\visual studio 2015\Projects\WebServer\WebServer\obj\Debug\WebServer.exe
+c:\users\carme\documents\visual studio 2015\Projects\WebServer\WebServer\obj\Debug\WebServer.pdb
+c:\users\carme\documents\visual studio 2015\Projects\WebServer\WebServer\bin\Debug\Framework.dll
+c:\users\carme\documents\visual studio 2015\Projects\WebServer\WebServer\bin\Debug\Framework.pdb

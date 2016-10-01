@@ -1,0 +1,8 @@
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\WebServer\bin\Release\WebServer.exe.config
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\WebServer\bin\Release\WebServer.exe
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\WebServer\bin\Release\WebServer.pdb
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\WebServer\bin\Release\Framework.dll
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\WebServer\bin\Release\Framework.pdb
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\WebServer\obj\Release\WebServer.csprojResolveAssemblyReference.cache
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\WebServer\obj\Release\WebServer.exe
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\WebServer\obj\Release\WebServer.pdb

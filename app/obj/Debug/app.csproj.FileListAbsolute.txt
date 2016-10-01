@@ -1,0 +1,7 @@
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\app\bin\Debug\app.dll
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\app\bin\Debug\app.pdb
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\app\bin\Debug\Framework.dll
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\app\bin\Debug\Framework.pdb
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\app\obj\Debug\app.csprojResolveAssemblyReference.cache
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\app\obj\Debug\app.dll
+C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\app\obj\Debug\app.pdb
