@@ -5,6 +5,10 @@ namespace Framework
 {
     public class Response
     {
+        const string textMIME = "text/plain; charset=UTF-8";
+        const string jpegMIME = "image/jpeg";
+        const string htmlMIME = "text/html";
+
         public Response()
         { }
 
@@ -14,6 +18,7 @@ namespace Framework
             {
                 using (Stream filestream = File.Open(filepath, FileMode.Open))
                 {
+                    //response200(oStream, filepath.Substring(filepath.LastIndexOf('.')));
                     transferFile(filestream, oStream.BaseStream);
                 }
             }
@@ -27,7 +32,7 @@ namespace Framework
             else if (code == 401)
                 response401(oStream, msg);
             else
-                response200(oStream);
+                response200(oStream, ".txt", msg);
         }
 
         private void response404(StreamWriter oStream, string msg)
@@ -52,11 +57,23 @@ namespace Framework
             }
         }
 
-        private void response200(StreamWriter oStream)
+        private void response200(StreamWriter oStream, string extension, string msg)
         {
+            string mimetype;
+            if (extension == ".txt") { mimetype = textMIME; }
+            else if (extension == ".jpg") { mimetype = jpegMIME; }
+            else if (extension == ".html" || extension == ".shtml") { mimetype = htmlMIME; }
+            else { mimetype = textMIME; }
+
             oStream.Write("HTTP/1.0 200 OK");
             oStream.Write(Environment.NewLine);
+            oStream.Write("Content-Type: " + mimetype);
             oStream.Write(Environment.NewLine);
+            oStream.Write(Environment.NewLine);
+            if (msg != null)
+            {
+                oStream.Write(msg);
+            }
         }
 
         public static long transferFile(Stream source, Stream target)
@@ -74,5 +91,18 @@ namespace Framework
             }
             return totalBytes;
         }
+
+        //image/jpeg
+        //text/plain; charset=UTF-8
+        //text/html
+
+        /*
+        ostream.Write("HTTP/1.0 200 OK");
+        ostream.Write(Environment.NewLine);
+        ostream.Write("Content-Type: text/plain; charset=UTF-8");
+        ostream.Write(Environment.NewLine);
+        ostream.Write("Content-Length: " + filestream.Length);
+        ostream.Write(Environment.NewLine);
+        */
     }
 }

@@ -6,6 +6,7 @@ using System.Net.NetworkInformation;
 using System.Threading;
 using System.IO;
 using System.Reflection;
+using System.Collections.Generic;
 using Framework;
 
 namespace WebServer
@@ -18,6 +19,8 @@ namespace WebServer
         const string backslash = @"\";
         TcpListener server;
         TcpClient client;
+        
+        List<People> peopleDB;
 
         public Server()
         {
@@ -67,7 +70,7 @@ namespace WebServer
                     Console.WriteLine($"ERROR: Port parameter provided is not a number.");
                     Console.WriteLine($"Default Port Number {defaultPortNumber} will be used instead.");
                     Console.WriteLine();
-                }   
+                }
                 this.port = defaultPortNumber;
             }
             assignRootPath(path);
@@ -96,7 +99,7 @@ namespace WebServer
                 rootpath = path;
             }
             else
-            {  
+            {
                 rootpath = Directory.GetCurrentDirectory();
             }
         }
@@ -111,6 +114,7 @@ namespace WebServer
 
         public void listen()
         {
+            peopleDB = new List<People>();
             server = new TcpListener(IPAddress.Loopback, port); // Port number in localhost
             server.Start();
             Console.WriteLine($"Listening on port {port}...");
@@ -158,6 +162,7 @@ namespace WebServer
 
         public void outputFileToClient(StreamWriter ostream, string filename, string username, string password)
         {
+            Response response = new Response();
             string path = rootpath + backslash; ;
             bool fileProtected = isProtected(filename);
             filename.TrimStart('/');
@@ -168,55 +173,25 @@ namespace WebServer
                 {
                     if (username == null || password == null)
                     {
-                        ostream.Write("HTTP/1.0 401 Unauthorized");
-                        ostream.Write(Environment.NewLine);
-                        ostream.Write(Environment.NewLine);
-
-                        ostream.Write("ERROR 401: El archivo esta protegido. Debe proveer nombre de usuario y clave.");
+                        response.respondToClient(ostream, 401, "File is Protected. Username and Password must be provided.");
                         Console.WriteLine();
                         return;
                     }
                     //if (!username.Equals("agente") || !password.Equals("secreto"))
                     if (!username.Equals("12345"))
                     {
-                        ostream.Write("HTTP/1.0 401 Unauthorized");
-                        ostream.Write(Environment.NewLine);
-                        ostream.Write(Environment.NewLine);
-
-                        ostream.Write("ERROR 401: Nombre de usuario incorrecto o clave incorrecta.");
+                        response.respondToClient(ostream, 401, "Wrong Username of Password.");
                         Console.WriteLine();
                         return;
                     }
                 }
-
-                using (Stream filestream = File.Open(path + filename, FileMode.Open))
-                {
-                    CopyStream(filestream, ostream.BaseStream);    
-                }
-
+                response.respondToClient(ostream, path + filename);
             }
             else
             {
-                ostream.Write("HTTP/1.0 404 Not Found");
-                ostream.Write(Environment.NewLine);
-                ostream.Write(Environment.NewLine);
-
-                ostream.Write("ERROR 404: El archivo solicitado NO existe.");
+                response.respondToClient(ostream, 404, "File Not Found.");
             }
             Console.WriteLine();
-
-            //image/jpeg
-            //text/plain; charset=UTF-8
-            //text/html
-
-            /*
-            ostream.Write("HTTP/1.0 200 OK");
-            ostream.Write(Environment.NewLine);
-            ostream.Write("Content-Type: text/plain; charset=UTF-8");
-            ostream.Write(Environment.NewLine);
-            ostream.Write("Content-Length: " + filestream.Length);
-            ostream.Write(Environment.NewLine);
-            */
         }
 
         /// ------------------------------------------------------------------------------------------------------------
@@ -226,6 +201,7 @@ namespace WebServer
             Response response = new Response();
             string appName = null;
             string controllerName = null;
+            string param = null;
             string usingpath = null;
 
             Console.WriteLine();
@@ -238,6 +214,12 @@ namespace WebServer
             if (url.Split('/')[2] != null && url.Split('/')[2] != "")
             {
                 controllerName = url.Split('/')[2];
+                int qcount = controllerName.Count(q => q == '?');
+                if (qcount > 0)
+                {
+                    param = controllerName.Split('?')[1];
+                    controllerName = controllerName.Split('?')[0];
+                }
             }
 
             // Checking if provided app exists
@@ -258,9 +240,9 @@ namespace WebServer
             if (assembly == null)
             {
                 response.respondToClient(oStream, 404, "Could not find your app.");
-                return;       
+                return;
             }
-            
+
             // Checking if is a valid httpVerb
             string[] validVerbs = { "GET", "POST", "PUT", "DELETE" };
             if (!validVerbs.Contains(verb))
@@ -268,10 +250,18 @@ namespace WebServer
                 response.respondToClient(oStream, 404, "Invalid HTTP verb.");
                 return;
             }
-            
-            var controllerType = typeof(Controller);
+
+            // Checking if app has contract with framework
+            var appType = typeof(IApp);
+            Type tApp = assembly.GetTypes().FirstOrDefault(t => appType.IsAssignableFrom(t));
+            if (tApp == null)
+            {
+                response.respondToClient(oStream, 404, "Your app is not compatible with Server Framework.");
+                return;
+            }
 
             // Getting the Controller type
+            var controllerType = typeof(Controller);
             Type tController = assembly.GetTypes().FirstOrDefault(
                 t => t.FullName == $"{appName}.{controllerName}Controller" &&
                 controllerType.IsAssignableFrom(t));
@@ -302,11 +292,70 @@ namespace WebServer
             // Creating an instance for the controller
             object classInstance = Activator.CreateInstance(tController, null);
             ParameterInfo[] parameters = method.GetParameters();
-            object[] parametersArray = { usingpath+backslash };
+            object[] parametersArray = { usingpath + backslash };
             string filepath = (string)method.Invoke(classInstance, parametersArray);
 
-            Console.WriteLine($"Returning file: {filepath}");
-            response.respondToClient(oStream, filepath);
+            if (param == null || verb == "GET")
+            {
+                Console.WriteLine($"Returning file: {filepath}");
+                response.respondToClient(oStream, filepath);
+            }
+            else
+            {
+                string param1 = param.Split('&')[0];
+                string param2 = param.Split('&')[1];
+                string param3 = param.Split('&')[2];
+                string firstname = param1.Split('=')[1];
+                string lastname = param2.Split('=')[1];
+                string age = param3.Split('=')[1];
+
+                if (verb == "POST" || verb == "PUT")
+                {
+                    response.respondToClient(oStream, 200, pPeople(firstname, lastname, age));
+                }
+                else if (verb == "DELETE")
+                {
+                    int dCode = getDeleteCode(firstname, lastname);
+                    response.respondToClient(oStream, dCode, dPeople(dCode, firstname, lastname));
+                }
+            }
+
+        }
+
+        public string pPeople(string firstname, string lastname, string age)
+        {
+            peopleDB.Add(new People(firstname, lastname, age));
+            string result = "";
+            foreach (People p in peopleDB)
+            {
+                result += p.firstname + " " + p.lastname + " (" + p.age + ")\r\n";
+            }
+            return result;
+        }
+
+        public string dPeople(int code, string firstname, string lastname)
+        {
+            string uuid = "UNKNOWN CODE ERROR.";
+            if (code == 200)
+            {
+                People person = peopleDB.FirstOrDefault(p => p.firstname.Equals(firstname) && p.lastname.Equals(lastname));
+                uuid = "Deleted Registry UUID: " + person.id;
+                peopleDB.Remove(person);
+            }
+            else if (code == 404)
+            {
+                uuid = "No registry found with provided Name and LastName.";
+            }
+            return uuid;
+        }
+
+        public int getDeleteCode(string firstname, string lastname)
+        {
+            if (peopleDB.Exists(p => p.firstname.Equals(firstname) && p.lastname.Equals(lastname)))
+            {
+                return 200;
+            }
+            return 404;
         }
 
         public long CopyStream(Stream source, Stream target)
@@ -325,4 +374,5 @@ namespace WebServer
             return totalBytes;
         }
     }
+    
 }

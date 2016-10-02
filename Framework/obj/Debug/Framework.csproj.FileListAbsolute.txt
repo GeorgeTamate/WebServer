@@ -2,4 +2,3 @@ c:\users\carme\documents\visual studio 2015\Projects\WebServer\Framework\bin\Deb
 c:\users\carme\documents\visual studio 2015\Projects\WebServer\Framework\bin\Debug\Framework.pdb
 c:\users\carme\documents\visual studio 2015\Projects\WebServer\Framework\obj\Debug\Framework.dll
 c:\users\carme\documents\visual studio 2015\Projects\WebServer\Framework\obj\Debug\Framework.pdb
-C:\Users\carme\Documents\Visual Studio 2015\Projects\WebServer\Framework\obj\Debug\Framework.csprojResolveAssemblyReference.cache

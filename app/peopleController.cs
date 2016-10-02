@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Framework;
 using app.Attributes;
+using System;
 
 namespace app
 {
@@ -13,7 +14,7 @@ namespace app
         {
             if (File.Exists($"{path}peopleGet.shtml"))
             {
-                using (Stream filestream = File.Open($"{path}peopleGet.shtml", FileMode.Open))
+                //using (Stream filestream = File.Open($"{path}peopleGet.shtml", FileMode.Open))
                     return $"{path}peopleGet.shtml";
             }
             return null;
@@ -24,7 +25,7 @@ namespace app
         {
             if (File.Exists($"{path}peoplePost.shtml"))
             {
-                using (Stream filestream = File.Open($"{path}peoplePost.shtml", FileMode.Open))
+                //using (Stream filestream = File.Open($"{path}peoplePost.shtml", FileMode.Open))
                     return $"{path}peoplePost.shtml";
             }
             return null;
@@ -35,7 +36,7 @@ namespace app
         {
             if (File.Exists($"{path}peoplePut.shtml"))
             {
-                using (Stream filestream = File.Open($"{path}peoplePut.shtml", FileMode.Open))
+                //using (Stream filestream = File.Open($"{path}peoplePut.shtml", FileMode.Open))
                     return $"{path}peoplePut.shtml";
             }
             return null;
@@ -46,7 +47,7 @@ namespace app
         {
             if (File.Exists($"{path}peopleDelete.shtml"))
             {
-                using (Stream filestream = File.Open($"{path}peopleDelete.shtml", FileMode.Open))
+                //using (Stream filestream = File.Open($"{path}peopleDelete.shtml", FileMode.Open))
                     return $"{path}peopleDelete.shtml";
             }
             return null;

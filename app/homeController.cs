@@ -11,10 +11,10 @@ namespace app
         [AttrGET]
         public string Index(string path)
         {
-            if (File.Exists($"{path}peopleGet.shtml"))
+            if (File.Exists($"{path}peopleForm.html"))
             {
-                using (Stream filestream = File.Open($"{path}peopleGet.shtml", FileMode.Open))
-                    return $"{path}peopleGet.shtml";
+                //using (Stream filestream = File.Open($"{path}peopleGet.shtml", FileMode.Open))
+                    return $"{path}peopleForm.html";
             }
             return null;
         }
